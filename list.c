@@ -24,16 +24,19 @@ void list_insert(listNodePtr *head, list_data data) {
 
 void list_delete_multiplicity_5(listNodePtr *head) {
     listNodePtr tmpPtr, prevPtr, curPtr;
+    int isDone = 0;
     while (*head != NULL && (*head)->data.number % 5 == 0) {
         tmpPtr = *head;
         *head = (*head)->nextItem;
         free(tmpPtr);
+        isDone = 1;
     }
     prevPtr = *head;
     curPtr = (*head);
-    while (curPtr != NULL) {
+    while (!isDone && curPtr != NULL) {
         if (curPtr->data.number % 5 == 0) {
             prevPtr->nextItem = curPtr->nextItem;
+            isDone = 1;
         }
         prevPtr = curPtr;
         curPtr = curPtr->nextItem;
@@ -42,6 +45,7 @@ void list_delete_multiplicity_5(listNodePtr *head) {
 
 void list_add_multiplicity_7(listNodePtr *head) {
     listNodePtr prevPtr, curPtr;
+    int isDone = 0;
     if (*head != NULL) {
         if ((*head)->data.number % 7 == 0) {
             listNodePtr tmp = malloc(sizeof(listNode));
@@ -49,22 +53,33 @@ void list_add_multiplicity_7(listNodePtr *head) {
             tmp->data.number = (*head)->data.number;
             (*head)->data.number = 1;
             (*head)->nextItem = tmp;
-        } else {
-            curPtr = (*head)->nextItem;
-            int isDone = 0;
-            while (!isDone && curPtr->data.number % 7 != 0) {
-                curPtr = curPtr->nextItem;
-                if (curPtr == NULL || curPtr->data.number % 7 == 0) {
-                    isDone = 1;
-                }
-            }
-            if (curPtr != NULL) {
+            isDone = 1;
+        }
+        curPtr = (*head)->nextItem;
+        if(isDone && curPtr->nextItem != NULL){
+            curPtr = curPtr->nextItem;
+        }
+        while (curPtr != NULL) {
+            isDone = 0;
+            if (curPtr->data.number % 7 == 0) {
                 listNodePtr tmp = malloc(sizeof(listNode));
                 tmp->nextItem = curPtr->nextItem;
                 tmp->data.number = curPtr->data.number;
                 curPtr->data.number = 1;
                 curPtr->nextItem = tmp;
+                isDone = 1;
             }
+            curPtr = curPtr->nextItem;
+            if(isDone){
+                curPtr = curPtr->nextItem;
+            }
+        }
+        if (curPtr != NULL) {
+            listNodePtr tmp = malloc(sizeof(listNode));
+            tmp->nextItem = curPtr->nextItem;
+            tmp->data.number = curPtr->data.number;
+            curPtr->data.number = 1;
+            curPtr->nextItem = tmp;
         }
     }
 }
